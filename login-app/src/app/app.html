@@ -1,0 +1,588 @@
+<div class="auth-viewport">
+  <!-- Dynamic Ambient Glowing Orbs -->
+  <div class="ambient-glow orb-1"></div>
+  <div class="ambient-glow orb-2"></div>
+  <div class="ambient-glow orb-3"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- Toast Notification Alert -->
+  @if (toast(); as t) {
+    <div class="toast-banner toast-{{ t.type }}" role="alert">
+      <div class="toast-icon">
+        @if (t.type === 'success') {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        } @else if (t.type === 'error') {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        } @else {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        }
+      </div>
+      <span class="toast-text">{{ t.message }}</span>
+      <button type="button" class="toast-close" (click)="toast.set(null)" aria-label="Close notification">×</button>
+    </div>
+  }
+
+  <!-- Main View Area -->
+  <main class="auth-container">
+    
+    <!-- State 1: When User is Logged In (Authenticated State Preview) -->
+    @if (isLoggedIn() && currentUser(); as user) {
+      <div class="authenticated-card">
+        <div class="success-badge">
+          <div class="pulse-ring"></div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+        </div>
+
+        <h2 class="welcome-title">Access Authorized</h2>
+        <p class="welcome-sub">You are connected to the Aura Secure Cloud Portal.</p>
+
+        <div class="user-profile-widget">
+          <img [src]="user.avatar" [alt]="user.name" class="user-avatar" />
+          <div class="user-details">
+            <h3 class="user-name">{{ user.name }}</h3>
+            <p class="user-email">{{ user.email }}</p>
+            <span class="user-role-badge">
+              <span class="status-dot"></span>
+              {{ user.role }}
+            </span>
+          </div>
+        </div>
+
+        <div class="session-stats">
+          <div class="stat-item">
+            <span class="stat-label">Security Tier</span>
+            <span class="stat-val text-accent">Tier-3 AES</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Session ID</span>
+            <span class="stat-val">#AU-98421</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Connection</span>
+            <span class="stat-val text-success">Encrypted</span>
+          </div>
+        </div>
+
+        <div class="dashboard-actions">
+          <button type="button" class="btn-primary" (click)="showToast('Dashboard workspace is launching...', 'info')">
+            <span>Enter Cloud Workspace</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+          
+          <button type="button" class="btn-ghost" (click)="logout()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- State 2: Login & Registration Portal -->
+    @if (!isLoggedIn()) {
+      <div class="auth-card">
+        
+        <!-- Header & Logo -->
+        <header class="auth-header">
+          <div class="brand-logo">
+            <div class="logo-icon-wrap">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#06b6d4" />
+                    <stop offset="50%" stop-color="#6366f1" />
+                    <stop offset="100%" stop-color="#d946ef" />
+                  </linearGradient>
+                </defs>
+                <polygon points="12 2 2 7 12 12 22 7 12 2" stroke="url(#logoGrad)" stroke-width="2" fill="rgba(99, 102, 241, 0.15)"></polygon>
+                <polyline points="2 17 12 22 22 17" stroke="url(#logoGrad)" stroke-width="2"></polyline>
+                <polyline points="2 12 12 17 22 12" stroke="url(#logoGrad)" stroke-width="2"></polyline>
+              </svg>
+            </div>
+            <span class="brand-name">AURA<span class="brand-dot">.</span>IO</span>
+          </div>
+          
+          <h1 class="auth-title">
+            {{ activeTab() === 'login' ? 'Welcome Back' : 'Create Account' }}
+          </h1>
+          <p class="auth-subtitle">
+            {{ activeTab() === 'login' 
+                ? 'Sign in to access your secure enterprise infrastructure.' 
+                : 'Join high-velocity teams operating with next-gen cloud security.' }}
+          </p>
+        </header>
+
+        <!-- Quick Demo Credentials Helper -->
+        <div class="demo-helpers">
+          <span class="demo-label">Quick Test:</span>
+          <button type="button" class="demo-chip" (click)="fillDemo('admin')" title="Autofill enterprise admin test account">
+            <span class="chip-dot"></span> Admin Demo
+          </button>
+          <button type="button" class="demo-chip" (click)="fillDemo('designer')" title="Autofill regular user test account">
+            <span class="chip-dot dot-alt"></span> Sarah Demo
+          </button>
+        </div>
+
+        <!-- Mode Navigation Tabs -->
+        <div class="tab-switcher" role="tablist">
+          <button 
+            type="button" 
+            role="tab"
+            class="tab-btn" 
+            [class.active]="activeTab() === 'login'"
+            (click)="setTab('login')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span>Sign In</span>
+          </button>
+          
+          <button 
+            type="button" 
+            role="tab"
+            class="tab-btn" 
+            [class.active]="activeTab() === 'register'"
+            (click)="setTab('register')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            <span>Register</span>
+          </button>
+        </div>
+
+        <!-- Social Sign-In Buttons -->
+        <div class="social-login-grid">
+          <button type="button" class="btn-social" (click)="handleSocialLogin('Google')" title="Continue with Google">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.15z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+            </svg>
+            <span>Google</span>
+          </button>
+
+          <button type="button" class="btn-social" (click)="handleSocialLogin('GitHub')" title="Continue with GitHub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            <span>GitHub</span>
+          </button>
+
+          <button type="button" class="btn-social" (click)="handleSocialLogin('Microsoft')" title="Continue with Single Sign-On">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#f25022" d="M1 1h10v10H1z"/>
+              <path fill="#00a4ef" d="M1 13h10v10H1z"/>
+              <path fill="#7fba00" d="M13 1h10v10H13z"/>
+              <path fill="#ffb900" d="M13 13h10v10H13z"/>
+            </svg>
+            <span>SSO</span>
+          </button>
+        </div>
+
+        <div class="divider">
+          <span class="divider-line"></span>
+          <span class="divider-text">or with email</span>
+          <span class="divider-line"></span>
+        </div>
+
+        <!-- FORM 1: LOGIN FORM -->
+        @if (activeTab() === 'login') {
+          <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="auth-form" novalidate>
+            
+            <!-- Email Field -->
+            <div class="form-group" [class.has-error]="loginEmail?.touched && loginEmail?.invalid">
+              <label for="login-email" class="form-label">Corporate Email</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </span>
+                <input 
+                  id="login-email" 
+                  type="email" 
+                  formControlName="email" 
+                  placeholder="name@company.com" 
+                  class="form-input" 
+                  autocomplete="email"
+                />
+                @if (loginEmail?.valid) {
+                  <span class="input-success-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </span>
+                }
+              </div>
+              @if (loginEmail?.touched && loginEmail?.invalid) {
+                <span class="form-error-msg">Valid corporate email is required.</span>
+              }
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group" [class.has-error]="loginPassword?.touched && loginPassword?.invalid">
+              <div class="label-row">
+                <label for="login-password" class="form-label">Password</label>
+                <button type="button" class="btn-text-link" (click)="openForgotModal()">
+                  Forgot password?
+                </button>
+              </div>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input 
+                  id="login-password" 
+                  [type]="showPassword() ? 'text' : 'password'" 
+                  formControlName="password" 
+                  placeholder="••••••••••••" 
+                  class="form-input" 
+                  autocomplete="current-password"
+                />
+                <button 
+                  type="button" 
+                  class="password-toggle" 
+                  (click)="togglePasswordVisibility()" 
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+                  @if (showPassword()) {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  } @else {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="3" r="3"></circle>
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (loginPassword?.touched && loginPassword?.invalid) {
+                <span class="form-error-msg">Password must be at least 6 characters.</span>
+              }
+            </div>
+
+            <!-- Remember Me & Options -->
+            <div class="options-row">
+              <label class="custom-checkbox">
+                <input type="checkbox" formControlName="rememberMe" />
+                <span class="checkbox-indicator">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span class="checkbox-label">Keep me authenticated for 30 days</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit" 
+              class="btn-submit" 
+              [disabled]="isLoading()">
+              @if (isLoading()) {
+                <span class="btn-spinner"></span>
+                <span>Authenticating Securely...</span>
+              } @else {
+                <span>Sign In to Aura</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              }
+            </button>
+          </form>
+        }
+
+        <!-- FORM 2: REGISTER FORM -->
+        @if (activeTab() === 'register') {
+          <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="auth-form" novalidate>
+            
+            <!-- Full Name -->
+            <div class="form-group" [class.has-error]="regFullName?.touched && regFullName?.invalid">
+              <label for="reg-name" class="form-label">Full Name</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </span>
+                <input 
+                  id="reg-name" 
+                  type="text" 
+                  formControlName="fullName" 
+                  placeholder="e.g. Elena Rostova" 
+                  class="form-input" 
+                />
+              </div>
+              @if (regFullName?.touched && regFullName?.invalid) {
+                <span class="form-error-msg">Please enter your name.</span>
+              }
+            </div>
+
+            <!-- Email -->
+            <div class="form-group" [class.has-error]="regEmail?.touched && regEmail?.invalid">
+              <label for="reg-email" class="form-label">Corporate Email</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </span>
+                <input 
+                  id="reg-email" 
+                  type="email" 
+                  formControlName="email" 
+                  placeholder="name@organization.com" 
+                  class="form-input" 
+                />
+              </div>
+              @if (regEmail?.touched && regEmail?.invalid) {
+                <span class="form-error-msg">A valid corporate email is required.</span>
+              }
+            </div>
+
+            <!-- Password -->
+            <div class="form-group" [class.has-error]="regPassword?.touched && regPassword?.invalid">
+              <label for="reg-password" class="form-label">Password</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input 
+                  id="reg-password" 
+                  [type]="showPassword() ? 'text' : 'password'" 
+                  formControlName="password" 
+                  placeholder="At least 8 characters" 
+                  class="form-input" 
+                />
+                <button 
+                  type="button" 
+                  class="password-toggle" 
+                  (click)="togglePasswordVisibility()" 
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+                  @if (showPassword()) {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  } @else {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="3" r="3"></circle>
+                    </svg>
+                  }
+                </button>
+              </div>
+
+              <!-- Password Strength Indicator -->
+              @if (registerPassword()) {
+                <div class="strength-meter">
+                  <div class="meter-bar-track">
+                    <div 
+                      class="meter-bar-fill" 
+                      [style.width]="passwordStrength().percent + '%'"
+                      [style.backgroundColor]="passwordStrength().color">
+                    </div>
+                  </div>
+                  <div class="strength-info">
+                    <span class="strength-tag">Security Strength:</span>
+                    <span class="strength-text" [style.color]="passwordStrength().color">
+                      {{ passwordStrength().label }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group" [class.has-error]="regConfirmPassword?.touched && (regConfirmPassword?.invalid || regPassword?.value !== regConfirmPassword?.value)">
+              <label for="reg-confirm-password" class="form-label">Confirm Password</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </span>
+                <input 
+                  id="reg-confirm-password" 
+                  [type]="showConfirmPassword() ? 'text' : 'password'" 
+                  formControlName="confirmPassword" 
+                  placeholder="Repeat your password" 
+                  class="form-input" 
+                />
+                <button 
+                  type="button" 
+                  class="password-toggle" 
+                  (click)="toggleConfirmPasswordVisibility()" 
+                  [attr.aria-label]="showConfirmPassword() ? 'Hide password' : 'Show password'">
+                  @if (showConfirmPassword()) {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  } @else {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="3" r="3"></circle>
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (regConfirmPassword?.touched && regPassword?.value !== regConfirmPassword?.value) {
+                <span class="form-error-msg">Passwords do not match.</span>
+              }
+            </div>
+
+            <!-- Terms agreement checkbox -->
+            <div class="options-row">
+              <label class="custom-checkbox">
+                <input type="checkbox" formControlName="agreeTerms" />
+                <span class="checkbox-indicator">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span class="checkbox-label">
+                  I agree to the <a href="#terms" class="inline-link" (click)="prevent($event)">Service Agreement</a> and <a href="#privacy" class="inline-link" (click)="prevent($event)">Privacy Policy</a>
+                </span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit" 
+              class="btn-submit" 
+              [disabled]="isLoading()">
+              @if (isLoading()) {
+                <span class="btn-spinner"></span>
+                <span>Creating Account...</span>
+              } @else {
+                <span>Create Enterprise Account</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              }
+            </button>
+          </form>
+        }
+
+        <!-- Footer / Trust Badges -->
+        <footer class="auth-footer">
+          <div class="security-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>256-bit End-to-End Encryption</span>
+          </div>
+          <div class="security-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span>SOC2 Type-II & ISO 27001</span>
+          </div>
+        </footer>
+
+      </div>
+    }
+
+  </main>
+
+  <!-- Forgot Password Glass Modal -->
+  @if (showForgotModal()) {
+    <div class="modal-backdrop" (click)="closeForgotModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <button type="button" class="modal-close-btn" (click)="closeForgotModal()" aria-label="Close dialog">×</button>
+        
+        <div class="modal-header">
+          <div class="modal-icon-wrap">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <h2 class="modal-title">Reset Your Password</h2>
+          <p class="modal-desc">
+            Provide the email address linked to your account. We'll send an encrypted recovery link.
+          </p>
+        </div>
+
+        @if (!forgotSuccess()) {
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="forgot-email-input" class="form-label">Account Email</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </span>
+                <input 
+                  id="forgot-email-input"
+                  #forgotInput
+                  type="email" 
+                  [value]="forgotEmail()" 
+                  (input)="onForgotEmailInput(forgotInput.value)" 
+                  placeholder="name@company.com" 
+                  class="form-input" 
+                />
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-ghost" (click)="closeForgotModal()">Cancel</button>
+              <button type="button" class="btn-primary" (click)="sendPasswordReset()">Send Reset Link</button>
+            </div>
+          </div>
+        } @else {
+          <div class="modal-success">
+            <div class="success-icon-circ">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <p class="modal-success-text">A reset token has been dispatched to <strong>{{ forgotEmail() }}</strong>.</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
